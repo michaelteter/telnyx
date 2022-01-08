@@ -25,8 +25,8 @@ arrived.  But storing all prices in the history table has two benefits:
 
 =end
 
-module OmegaClient
-  class OmegaClientException < StandardError; end
+module OmegaService
+  class OmegaServiceException < StandardError; end
 
   extend self
 
@@ -35,6 +35,6 @@ module OmegaClient
 
   def get_prices(start_date: nil, end_date: nil)
     response = HTTP.get(API_PATH, params: { api_key: API_KEY, start_date: start_date, end_date: end_date })
-    p response.parse
+    response.parse
   end
 end
