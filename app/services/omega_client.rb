@@ -31,7 +31,7 @@ module OmegaClient
   extend self
 
   API_PATH = 'http://localhost:8080/pricing/records.json'
-  API_KEY = 'abc123key'
+  API_KEY = Rails.application.credentials.omega_api.api_key
 
   def get_prices(start_date: nil, end_date: nil)
     response = HTTP.get(API_PATH, params: { api_key: API_KEY, start_date: start_date, end_date: end_date })
