@@ -2,8 +2,10 @@ one:
   product: one
   price: 1
   percentage_change: 9.99
+  vendor_date: 2020-01-01 00:00:00
 
 two:
   product: two
   price: 1
   percentage_change: 9.99
+  vendor_date: 2020-01-01 00:00:00
