@@ -1,3 +1,3 @@
 class Product < ApplicationRecord
-  has_many :product_prices
+  has_many :historical_prices, foreign_key: 'product_id', class_name: 'ProductPrice'
 end

@@ -8,6 +8,7 @@ module ProductUpdateService
     # Insert any new products into products table.
     # Add price records to product_prices table when prices have changed from previous value.
 
+    end_date ||= Date.today
     # end_date could be a string '2022-01-31' or a Date, so ensure it is a Date.
     start_date, end_date = request_period(end_date: end_date.to_date)
 
@@ -34,13 +35,6 @@ module ProductUpdateService
     product || add_new_product!(api_product)
   end
 
-  def most_recent_product_price(product_id:)
-    # Return the most recent price and vendor_date for the given product id.
-    # If no record exists, return zero price and nil date.
-    db_product_price = ProductPrice.where(product_id: product_id).order(vendor_date: :desc).first
-    [db_product_price&.price, db_product_price&.vendor_date]
-  end
-
   def update_product_price!(product_id:, new_price:, vendor_date:)
     # If new price is different from most recent stored price, add new price record.
     # (If no previous record exists, then they are different...)
@@ -58,6 +52,22 @@ module ProductUpdateService
     end
   end
 
+  def most_recent_product_price(product_id:)
+    # Return the most recent price and vendor_date for the given product id.
+    # If no record exists, return zero price and nil date.
+    db_product_price = ProductPrice.where(product_id: product_id).order(vendor_date: :desc).first
+    [db_product_price&.price, db_product_price&.vendor_date]
+  end
+
+  def add_new_product!(api_product)
+    # Do not create a new product if the product is discontinued.
+    return if OmegaService.product_discontinued?(api_product)
+
+    # Assumes product does not already exist in db.  If it does exist, db will give a duplicate record error.
+    Product.create(vendor_id: OmegaService.product_id(api_product),
+                   name:      OmegaService.product_name(api_product))
+  end
+
   def request_period(end_date: nil)
     # Return a start/end date pair for the month up to the provided end_date.
     # If no end_date is provided, return current month period.
@@ -73,20 +83,11 @@ module ProductUpdateService
     end
   end
 
-  def add_new_product!(api_product)
-    # Do not create a new product if the product is discontinued.
-    return if OmegaService.product_discontinued?(api_product)
-
-    # Assumes product does not already exist in db.  If it does exist, db will give a duplicate record error.
-    Product.create(vendor_id: OmegaService.product_id(api_product),
-                   name:      OmegaService.product_name(api_product))
-  end
-
   def percent_price_change(previous_price:, new_price:)
     # There may be no previous price, so default it to zero.
     previous_price ||= 0
 
     # If prev or new price is zero, we can't calculate % change; just report 0.
-    previous_price * new_price == 0 ? 0.0 : (1.0 * (previous_price - new_price) / previous_price) * 100.0
+    previous_price * new_price == 0 ? 0.0 : (1.0 * (new_price - previous_price) / previous_price) * 100.0
   end
 end

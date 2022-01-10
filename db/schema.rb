@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 2022_01_08_161931) do
 
   create_table "products", force: :cascade do |t|
     t.string "vendor_id"
+    t.string "index"
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

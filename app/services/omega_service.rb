@@ -51,18 +51,24 @@ module OmegaService
     # Demo is temporary during development.
     # It allows us to tell the vendor API server to provide special results to test different behaviors.
     # To see what special behaviors exist, read the omega.go server file. :)
-    response = HTTP.get(API_PATH, params: { api_key:    API_KEY,
-                                            start_date: start_date,
-                                            end_date:   end_date,
-                                            demo:       demo })
-    prices = response&.parse&.[]('productRecords')
+    prices = remote_prices(start_date: start_date,
+                           end_date:   end_date,
+                           demo:       demo)&.[]('productRecords')
     raise OmegaServiceException, "Failed to get Omega prices for period [#{start_date}]-[#{end_date}]." unless prices.present?
     prices
   end
 
-  def price_in_cents(dollar_price)
-    match_string = /\d+#{Regexp.quote(PRICE_RADIX)}\d+/
-    (dollar_price.scan(match_string)&.first&.to_f * 100.0).to_i
+  def remote_prices(start_date:, end_date:, demo:)
+    response = HTTP.get(API_PATH, params: { api_key:    API_KEY,
+                                            start_date: start_date,
+                                            end_date:   end_date,
+                                            demo:       demo })
+    response&.parse
+  end
+
+  def price_in_cents(dollar_price, radix: PRICE_RADIX)
+    dollars, cents = dollar_price.gsub(/[^\d#{Regexp.quote(radix)}]/, '').split(radix)
+    dollars.to_i * 100 + cents.to_i
   end
 
   def product_id(api_product) api_product['id'] end

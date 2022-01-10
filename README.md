@@ -1,5 +1,21 @@
 # README
 
+##Overview
+
+This challenge is comprised of a Rails application which gets data from a remote API
+and stores it based on certain business rules, and a Go application which acts as a
+demo API server.
+
+There is no frontend on the Rails server.  Exercise of the application is done in the
+Rails console, primarily utilizing ProductUpdateService.update_products() method.
+
+Added code has corresponding tests, with 99.1% coverage.  Details are in coverage/index.html,
+after rspec has been run.
+
+The Go API server takes a "demo" parameter, allowing the user to demonstrate various
+behaviors based on the business rules.  Details of the demo options are in the brief
+omega_demo_service/omega.go source file.
+
 ##General Assumptions
 
 Spec indicates that we fetch a month range of pricing data, but doesn't specify if a product may have more than
@@ -35,3 +51,6 @@ current prices of products very easy, but it has some drawbacks:
 
 Therefore, the price data will only be kept in the product_prices table, and the most recent record for a given
 product is the "current" price.
+
+If the price history table were very large, it could make sense to define a materialized view that joins
+the product and product_prices tables with only the most recent price record for each product.

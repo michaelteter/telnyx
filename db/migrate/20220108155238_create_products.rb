@@ -1,7 +1,7 @@
 class CreateProducts < ActiveRecord::Migration[7.0]
   def change
     create_table :products do |t|
-      t.string :vendor_id
+      t.string :vendor_id, :index, unique: true
       t.string :name
 
       t.timestamps
