@@ -1,5 +1,9 @@
 # README
 
+##Author
+
+Michael Teter, January 2022
+
 ##Overview
 
 This challenge is comprised of a Rails application which gets data from a remote API
@@ -15,6 +19,20 @@ after rspec has been run.
 The Go API server takes a "demo" parameter, allowing the user to demonstrate various
 behaviors based on the business rules.  Details of the demo options are in the brief
 omega_demo_service/omega.go source file.
+
+##Dependencies
+
+Challenge Rails app: 
+
+- ruby 3.1.0
+- rails ~>7.0.1
+- rspec-rails ~5.0
+- http (HTTP.rb)
+- simplecov
+
+Demo API server: 
+
+- golang 1.17
 
 ##General Assumptions
 
